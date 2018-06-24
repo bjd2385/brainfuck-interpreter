@@ -29,56 +29,61 @@ def interpreter(program: str) -> None:
         RBRACKET = r'\['
         INPUT    = r','
         OUTPUT   = r'\.'
-
+        
         # Tokens for brainfuck
         tokens = { RCARROT, LCARROT, INC, DEC, 
                    LBRACKET, RBRACKET, INPUT, OUTPUT }
-
+        
         ignore = ' \t'
-
+        
+        # Catch comments
         ignore_newline = r'(\n|[^\>\<\+\-\]\[\,\.].*\r?\n)'
+
+        def error(self, t: Token) -> None:
+            print(f'Illegal character: {repr(t.value[0])}')
+            self.index += 1
 
     
     memory_space = array('b', [0] * 30000)
 
 
-    class BFParser(Parser):
-        tokens = BFLexer.tokens
-
-        def __init__(self) -> None:
-            self.names = {}
-
-        @_('RCARROT')
-        def command(self, p: Parser) -> None:
-            return p.expr
-
-        @_('LCARROT')
-        def command(self, p: Parser) -> None:
-            return p.expr
-
-        @_('INC')
-        def command(self, p: Parser) -> None:
-            return p.expr
-
-        @_('DEC')
-        def command(self, p: Parser) -> None:
-            return p.expr
-
-        @_('LBRACKET')
-        def command(self, p: Parser) -> None:
-            return p.expr
-
-        @_('RBRACKET')
-        def command(self, p: Parser) -> None:
-            return p.expr
-
-        @_('INPUT')
-        def command(self, p: Parser) -> None:
-            return p.expr
-
-        @_('OUTPUT')
-        def command(self, p: Parser) -> None:
-            return p.expr
+    #class BFParser(Parser):
+    #    tokens = BFLexer.tokens
+    #    
+    #    def __init__(self) -> None:
+    #        self.names = {}
+    #        
+    #    @_('RCARROT')
+    #    def command(self, p: Parser) -> None:
+    #        return p.expr
+    #        
+    #    @_('LCARROT')
+    #    def command(self, p: Parser) -> None:
+    #        return p.expr
+    #        
+    #    @_('INC')
+    #    def command(self, p: Parser) -> None:
+    #        return p.expr
+    #        
+    #    @_('DEC')
+    #    def command(self, p: Parser) -> None:
+    #        return p.expr
+    #        
+    #    @_('LBRACKET')
+    #    def command(self, p: Parser) -> None:
+    #        return p.expr
+    #        
+    #    @_('RBRACKET')
+    #    def command(self, p: Parser) -> None:
+    #        return p.expr
+    #        
+    #    @_('INPUT')
+    #    def command(self, p: Parser) -> None:
+    #        return p.expr
+    #        
+    #    @_('OUTPUT')
+    #    def command(self, p: Parser) -> None:
+    #        return p.expr
 
     
     lexer = BFLexer()
