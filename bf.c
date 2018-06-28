@@ -10,53 +10,31 @@
 #include <stdbool.h>
 
 #include "bf.h"
-
+#include "stack.h"
 
 extern int yylex();
 extern int yylineno;
-extern char *yytext;
+extern char* yytext;
 
+extern Stack* createStack(int size);
+extern void destroyStack(Stack* stack);
+extern bool isEmpty(Stack* stack);
+extern bool isFull(Stack* stack);
+extern void safeExpandPush(Stack* stack, char character);
+extern char pop(Stack* stack);
 
-// Stack structure for keeping track of open brackets
-typedef struct BracketStack
-{
-    int top;
-    unsigned size;
-    int *brackets;
+// This is how you define a list of (lists of characters) strings
+char *names[] = { 
+    NULL, "RCARROT", "LCARROT", "INC", "DEC", "LBRACKET", "RBRACKET", 
+    "INPUT", "OUTPUT"
 };
 
-
-BracketStack *
-createStack(void)
+// Convert a token number (as defined in the header file) to a token name
+char*
+getName(int tokenNumber, char** names)
 {
-    BracketStack *stack = malloc(sizeof(BracketStack));
-    stack->top = -1;
-    stack->size = MEMORY_SIZE; 
-    stack->brackets = malloc(stack->size * sizeof(BracketStack));
-    return stack;
+    return names[tokenNumber];
 }
-
-
-bool
-isFull(BracketStack *stack)
-{
-    return stack->top == stack->size - 1;
-}
-
-
-bool
-isEmpty(BracketStack *stack)
-{
-    return stack->top == -1;
-}
-
-
-int
-retToken(int num)
-{
-    return *names[num];
-}
-
 
 // Parser
 int 
@@ -64,24 +42,20 @@ main(int argc, char *argv[])
 {
     int nametoken, valuetoken;
     nametoken = yylex();
-    BracketStack *brackets = createStack();
-
-    char *names[] = { 
-        NULL, "RCARROT", "LCARROT", "INC", "DEC", "LBRACKET", "RBRACKET", 
-        "INPUT", "OUTPUT"
-    };
+    Stack* brackets = createStack(10);
 
     while (nametoken)
     {
-        printf("%d\n", nametoken);
+        char* token = getName(nametoken, names);
+        printf("%s\n", token);
 
         // Using a stack datastructure, ensure there is a closing bracket
         // for every opening bracket.
         if (nametoken == LBRACKET) {
-            brackets.push(nametoken);
+            safeExpandPush(brackets, '[');
 
         } else if (nametoken == RBRACKET) {
-            brackets.pop(nametoken);
+            pop(brackets);
         }
 
         nametoken = yylex();    // get next token

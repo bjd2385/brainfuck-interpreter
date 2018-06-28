@@ -89,23 +89,23 @@ pop(Stack* stack)
     return value;
 }
 
-int
-main(int argc, char **argv)
-{
-    Stack* stack = createStack(5);
-    printf("Size: %d\n", stack->size);
-    int i, current_size = stack->size;
-    for (i = 0; i < current_size + (current_size / 2); ++i) 
-        safeExpandPush(stack, 'a');
-    printf("Size: %d\n", stack->size);
-    for (i = 0; i < stack->size; ++i) {
-        char character = stack->contents[i];
-        if (character == 0)
-            printf("Em ");
-        else
-            printf("%c ", character);
-    }
-    printf("\n");
-    destroyStack(stack);
-    return 0;
-}
+//int
+//main(int argc, char **argv)
+//{
+//    Stack* stack = createStack(5);
+//    printf("Size: %d\n", stack->size);
+//    int i, current_size = stack->size;
+//    for (i = 0; i < current_size + (current_size / 2); ++i) 
+//        safeExpandPush(stack, 'a');
+//    printf("Size: %d\n", stack->size);
+//    for (i = 0; i < stack->size; ++i) {
+//        char character = stack->contents[i];
+//        if (character == 0)
+//            printf("Em ");
+//        else
+//            printf("%c ", character);
+//    }
+//    printf("\n");
+//    destroyStack(stack);
+//    return 0;
+//}
