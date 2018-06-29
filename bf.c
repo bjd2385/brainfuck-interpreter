@@ -21,10 +21,11 @@ extern void destroyStack(Stack* stack);
 extern bool isEmpty(Stack* stack);
 extern bool isFull(Stack* stack);
 extern void safeExpandPush(Stack* stack, char character);
+extern char retractPop(Stack* stack);
 extern char pop(Stack* stack);
 
-// This is how you define a list of (lists of characters) strings
-char *names[] = { 
+// This is how you define a list of (lists of characters, a.k.a.) strings
+char* names[] = { 
     NULL, "RCARROT", "LCARROT", "INC", "DEC", "LBRACKET", "RBRACKET", 
     "INPUT", "OUTPUT"
 };

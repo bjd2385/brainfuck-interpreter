@@ -3,6 +3,8 @@
  * (©) 2018 Brandon Doyle <bjd2385@aperiodicity.com>
  *
  * Distributed under terms of the MIT license.
+ *
+ * A stack for single characters or bytes.
  */
 
 #include "stack.h"
@@ -12,16 +14,32 @@
 #include <stdbool.h>
 #include <string.h>
 
+
 Stack* 
-createStack(int size)
+createStack(unsigned size)
 {
     Stack *stck;
     stck = malloc(sizeof(Stack));
     stck->count = 0;
+
+    // If `size` is not a power of 2, round down to the nearest power of two
+    //if ((size & (size - 1)) != 0) {
+    //    // -mlzcnt
+    //    //size = __builtin_ia32_lzcnt_u32(size);
+    //    size 
+    //}
+
     stck->size = size;
     stck->contents = malloc(size * sizeof(char));
     memset(stck->contents, 0, size);
     return stck;
+}
+
+Stack*
+createEmptyStack(void)
+{
+    // Initialize a stack of size 0 (for dynamic allocation)
+    return createStack(0);
 }
 
 void
@@ -68,13 +86,18 @@ safeExpandPush(Stack* stack, char character)
 {
     // If the stack is full, double the usable heap
     if (isFull(stack)) {
-        char* new_heap = malloc(stack->size * 2 * sizeof(char));
-        int i;
-        for (i = 0; i < stack->size; ++i)
-            new_heap[i] = stack->contents[i];
-        free(stack->contents);
-        stack->contents = new_heap;
-        stack->size <<= 1;
+        if (stack->size == 0) {
+            char* new_heap = malloc(sizeof(char));
+            free(stack->contents);
+            stack->contents = new_heap;
+            stack->size = 1;
+        } else {
+            char* new_heap = malloc(stack->size * 2 * sizeof(char));
+            memcpy(new_heap, stack->contents, stack->size * sizeof(char));
+            free(stack->contents);
+            stack->contents = new_heap;
+            stack->size <<= 1;
+        }   
     }
     push(stack, character);
 }
@@ -89,23 +112,62 @@ pop(Stack* stack)
     return value;
 }
 
+char
+retractPop(Stack* stack)
+{
+    // If the stack's size is less than 1/4 of the allocated heap, realloc
+    // to consume less resources
+    if (stack->count < stack->size / 4 + 1) {
+        unsigned new_size = stack->size / 4 * sizeof(char) + 1;
+        char* new_heap = malloc(new_size);
+        memcpy(new_heap, stack->contents, new_size);
+        free(stack->contents);
+        stack->contents = new_heap;
+        stack->size = new_size;
+    }
+    return pop(stack);
+}
+
+int
+main(int argc, char** argv)
+{
+    Stack* stack = createEmptyStack();
+    destroyStack(stack);
+
+    return 0;
+}
+
 //int
 //main(int argc, char **argv)
 //{
-//    Stack* stack = createStack(5);
-//    printf("Size: %d\n", stack->size);
-//    int i, current_size = stack->size;
-//    for (i = 0; i < current_size + (current_size / 2); ++i) 
+//    Stack* stack = createEmptyStack();
+//    printf("Size: %d, Count: %d\n", stack->size, stack->count);
+//    int i;
+//    //char character;
+//
+//    for (i = 0; i < 12345; ++i) 
 //        safeExpandPush(stack, 'a');
-//    printf("Size: %d\n", stack->size);
+//    printf("Size: %d, Count: %d\n", stack->size, stack->count);
+//
 //    for (i = 0; i < stack->size; ++i) {
-//        char character = stack->contents[i];
-//        if (character == 0)
-//            printf("Em ");
-//        else
-//            printf("%c ", character);
+//        stack->contents[i];
+//        //if (character == 0)
+//        //    printf("Em ");
+//        //else
+//        //    printf("%c ", character);
 //    }
+//
 //    printf("\n");
+//    for (i = 0; i < 12345; ++i) {
+//        retractPop(stack);
+//    }
+//    printf("Size: %d, Count: %d\n", stack->size, stack->count);
+//
+//    for (i = 0; i < 3; ++i)
+//        safeExpandPush(stack, 'a');
+//    printf("Size: %d, Count: %d\n", stack->size, stack->count);
+//
+//
 //    destroyStack(stack);
 //    return 0;
 //}

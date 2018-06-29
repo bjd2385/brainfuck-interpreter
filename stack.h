@@ -3,7 +3,7 @@
 
 typedef struct 
 {
-    int size;
+    unsigned size;
     int count;
     char* contents;
 } Stack;
