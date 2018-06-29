@@ -4,7 +4,13 @@
  *
  * Distributed under terms of the MIT license.
  *
- * A stack for single characters or bytes.
+ * A stack for single characters or bytes. Create a stack by calling
+ * `createEmptyStack` initially; thereafter, simply calling `safeExpandPush`
+ * and `retractPop` (iff the stack is not empty) will continually expand and
+ * constrain the amount of memory that's required to store the contents.
+ *
+ * Once an empty stack is expanded once, it will never be empty again (it will
+ * always be at least size 2).
  */
 
 #include "stack.h"
